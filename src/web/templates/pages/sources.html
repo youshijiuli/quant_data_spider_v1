@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}数据源 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}<a href="/data/stocks">数据浏览</a> / 数据源配置{% endblock %}
+{% block content %}
+<div class="subnav">
+    <a href="/data/stocks" class="tab">股票数据</a>
+    <a href="/data/indexes" class="tab">指数数据</a>
+    <a href="/data/financials" class="tab">财务数据</a>
+    <a href="/data/sources" class="tab active">数据源</a>
+</div>
+
+<table>
+    <thead><tr><th>代码</th><th>名称</th><th>类型</th><th>状态</th><th>请求频率(次/秒)</th></tr></thead>
+    <tbody>
+        {% for s in rows | default([]) %}
+        <tr>
+            <td><code>{{ s.source_code }}</code></td>
+            <td>{{ s.source_name }}</td>
+            <td>{{ s.source_type }}</td>
+            <td><span class="badge badge-{{ 'success' if s.is_active else 'error' }}">{{ 'active' if s.is_active else 'inactive' }}</span></td>
+            <td>{{ s.rate_limit_rps }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-muted">暂无数据源配置</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

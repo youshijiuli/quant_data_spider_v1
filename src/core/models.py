@@ -134,7 +134,7 @@ class StockFinancial(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     ts_code: Mapped[str] = mapped_column(String(16), nullable=False)
-    report_period: Mapped[str] = mapped_column(String(8), nullable=False, comment="2024Q4")
+    report_period: Mapped[str] = mapped_column(String(16), nullable=False, comment="2024Q4 or YYYY-MM-DD")
     end_date: Mapped[str] = mapped_column(Date, nullable=False, comment="Period end date")
     total_revenue: Mapped[float | None] = mapped_column(Float, comment="Operating revenue CNY")
     revenue_yoy: Mapped[float | None] = mapped_column(Float, comment="Revenue YoY growth %")
@@ -176,10 +176,10 @@ class DataSyncLog(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime)
 
     __table_args__ = (
-        Index("idx_batch_id", "batch_id"),
-        Index("idx_source_code", "source_code"),
-        Index("idx_status", "status"),
-        Index("idx_started_at", "started_at"),
+        Index("idx_sync_batch_id", "batch_id"),
+        Index("idx_sync_source_code", "source_code"),
+        Index("idx_sync_status", "status"),
+        Index("idx_sync_started_at", "started_at"),
         {"comment": "Data sync operation logs"},
     )
 

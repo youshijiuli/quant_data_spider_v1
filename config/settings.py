@@ -19,7 +19,7 @@ class DatabaseSettings(BaseSettings):
     password: str = ""
     name: str = "quant_data"
 
-    model_config = SettingsConfigDict(env_prefix="QUANT_DB_")
+    model_config = SettingsConfigDict(env_prefix="QUANT_DB_", env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     @property
     def url(self) -> str:

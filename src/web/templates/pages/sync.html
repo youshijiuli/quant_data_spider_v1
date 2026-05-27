@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}同步控制 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}同步控制{% endblock %}
+{% block content %}
+<div class="panel">
+    <h3>同步参数</h3>
+    <form hx-post="/sync/trigger" hx-target="#sync-result" hx-swap="innerHTML">
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 12px;">
+            <label>数据源
+                <select name="source_code">
+                    <option value="">-- 选择数据源 --</option>
+                    {% for s in sources | default([]) %}
+                    <option value="{{ s.source_code }}" {% if not s.is_active %}disabled{% endif %}>
+                        {{ s.source_code }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>股票代码 <input type="text" name="symbol" placeholder="000001" style="max-width:120px"></label>
+            <label>开始日期 <input type="date" name="start_date"></label>
+            <label>结束日期 <input type="date" name="end_date"></label>
+            <label>指数代码 <input type="text" name="index_code" placeholder="000300" style="max-width:120px"></label>
+        </div>
+        <button type="submit" class="btn-primary">执行同步</button>
+    </form>
+</div>
+
+<div class="panel">
+    <h3>批量同步</h3>
+    <div class="btn-group">
+        <form hx-post="/sync/trigger" hx-target="#sync-result" hx-swap="innerHTML" style="display:inline">
+            <input type="hidden" name="source_code" value="akshare_stock_basic">
+            <button type="submit" class="btn-sm">同步股票列表</button>
+        </form>
+        <form hx-post="/sync/trigger" hx-target="#sync-result" hx-swap="innerHTML" style="display:inline;margin-left:8px">
+            <input type="hidden" name="group_name" value="stock_daily">
+            <button type="submit" class="btn-primary">同步全部日线</button>
+        </form>
+        <form hx-post="/sync/trigger" hx-target="#sync-result" hx-swap="innerHTML" style="display:inline;margin-left:8px">
+            <input type="hidden" name="group_name" value="index_daily">
+            <button type="submit" class="btn-primary">同步全部指数</button>
+        </form>
+        <form hx-post="/sync/trigger" hx-target="#sync-result" hx-swap="innerHTML" style="display:inline;margin-left:8px">
+            <input type="hidden" name="group_name" value="all">
+            <button type="submit" class="btn-primary">同步全部</button>
+        </form>
+    </div>
+    <div id="sync-result" style="margin-top:12px"></div>
+</div>
+
+<div class="panel">
+    <h3>同步历史</h3>
+    <div id="sync-history" hx-get="/sync/history" hx-trigger="load" hx-swap="innerHTML">
+        <p class="text-muted">加载中...</p>
+    </div>
+</div>
+{% endblock %}

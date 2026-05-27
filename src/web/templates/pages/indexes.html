@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}指数数据 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}<a href="/data/stocks">数据浏览</a> / 指数数据{% endblock %}
+{% block content %}
+<div class="subnav">
+    <a href="/data/stocks" class="tab">股票数据</a>
+    <a href="/data/indexes" class="tab active">指数数据</a>
+    <a href="/data/financials" class="tab">财务数据</a>
+    <a href="/data/sources" class="tab">数据源</a>
+</div>
+
+<div class="filter-bar" hx-get="/data/indexes/table" hx-trigger="submit, change from:.filter-input delay:300ms" hx-target="#index-table-body" hx-include=".filter-input">
+    <input class="filter-input" name="index_code" placeholder="搜索指数代码...">
+</div>
+
+<div hx-get="/data/indexes/table" hx-trigger="load" hx-target="#index-table-body" hx-include=".filter-input">
+    <table>
+        <thead><tr><th>指数代码</th><th>名称</th><th>日期</th><th>开盘</th><th>最高</th><th>最低</th><th>收盘</th><th>涨跌幅%</th></tr></thead>
+        <tbody id="index-table-body">
+            <tr><td colspan="8" class="text-muted">加载中...</td></tr>
+        </tbody>
+    </table>
+    <div class="pagination-bar"></div>
+</div>
+{% endblock %}

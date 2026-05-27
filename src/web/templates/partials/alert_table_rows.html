@@ -1,0 +1,19 @@
+{% for a in alerts | default([]) %}
+<tr>
+    <td>{{ a.alert_time }}</td>
+    <td><span class="badge badge-{{ 'error' if a.severity == 'critical' else 'warning' if a.severity == 'warning' else 'info' }}">{{ a.severity }}</span></td>
+    <td>{{ a.title }}</td>
+    <td>{{ a.message[:80] }}{% if a.message|length > 80 %}...{% endif %}</td>
+    <td id="alert-status-{{ a.id }}"><span class="badge badge-{{ 'error' if a.status == 'open' else 'warning' if a.status == 'acknowledged' else 'success' }}">{{ a.status }}</span></td>
+    <td>
+        {% if a.status == 'open' %}
+        <button class="btn-sm" hx-post="/monitoring/alerts/{{ a.id }}/acknowledge" hx-target="#alert-status-{{ a.id }}" hx-swap="innerHTML">确认</button>
+        {% endif %}
+        {% if a.status != 'resolved' %}
+        <button class="btn-sm" hx-post="/monitoring/alerts/{{ a.id }}/resolve" hx-target="#alert-status-{{ a.id }}" hx-swap="innerHTML">解决</button>
+        {% endif %}
+    </td>
+</tr>
+{% else %}
+<tr><td colspan="6" class="text-muted">暂无告警记录</td></tr>
+{% endfor %}

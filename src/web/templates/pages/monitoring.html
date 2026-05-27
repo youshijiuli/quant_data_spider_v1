@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}告警中心 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}<a href="/monitoring">告警中心</a>{% endblock %}
+{% block content %}
+<div class="subnav">
+    <a href="/monitoring" class="tab active">告警列表</a>
+    <a href="/monitoring/rules" class="tab">监控规则</a>
+</div>
+
+<div class="filter-bar" hx-get="/monitoring/alerts/table" hx-trigger="change from:.filter-input" hx-target="#alert-table-body" hx-include=".filter-input">
+    <select class="filter-input" name="severity">
+        <option value="">全部严重度</option>
+        <option value="critical">严重</option>
+        <option value="warning">警告</option>
+        <option value="info">信息</option>
+    </select>
+    <select class="filter-input" name="status">
+        <option value="">全部状态</option>
+        <option value="open">未处理</option>
+        <option value="acknowledged">已确认</option>
+        <option value="resolved">已解决</option>
+    </select>
+</div>
+
+<table>
+    <thead><tr><th>时间</th><th>严重度</th><th>标题</th><th>消息</th><th>状态</th><th>操作</th></tr></thead>
+    <tbody id="alert-table-body">
+        {% for a in alerts | default([]) %}
+        <tr>
+            <td>{{ a.alert_time }}</td>
+            <td><span class="badge badge-{{ 'error' if a.severity == 'critical' else 'warning' if a.severity == 'warning' else 'info' }}">{{ a.severity }}</span></td>
+            <td>{{ a.title }}</td>
+            <td>{{ a.message[:80] }}{% if a.message|length > 80 %}...{% endif %}</td>
+            <td id="alert-status-{{ a.id }}"><span class="badge badge-{{ 'error' if a.status == 'open' else 'warning' if a.status == 'acknowledged' else 'success' }}">{{ a.status }}</span></td>
+            <td>
+                {% if a.status == 'open' %}
+                <button class="btn-sm" hx-post="/monitoring/alerts/{{ a.id }}/acknowledge" hx-target="#alert-status-{{ a.id }}" hx-swap="innerHTML">确认</button>
+                {% endif %}
+                {% if a.status != 'resolved' %}
+                <button class="btn-sm" hx-post="/monitoring/alerts/{{ a.id }}/resolve" hx-target="#alert-status-{{ a.id }}" hx-swap="innerHTML">解决</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-muted">暂无告警记录</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

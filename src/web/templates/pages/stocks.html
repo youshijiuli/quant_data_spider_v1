@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}股票数据 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}<a href="/data/stocks">数据浏览</a> / 股票数据{% endblock %}
+{% block content %}
+<div class="subnav">
+    <a href="/data/stocks" class="tab active">股票数据</a>
+    <a href="/data/indexes" class="tab">指数数据</a>
+    <a href="/data/financials" class="tab">财务数据</a>
+    <a href="/data/sources" class="tab">数据源</a>
+</div>
+
+<div class="filter-bar" hx-get="/data/stocks/table" hx-trigger="submit, change from:.filter-input delay:300ms" hx-target="#stock-table-body" hx-include=".filter-input">
+    <input class="filter-input" name="search" placeholder="搜索代码/名称..." value="{{ request.query_params.get('search', '') }}">
+    <select class="filter-input" name="exchange">
+        <option value="">全部交易所</option>
+        <option value="SH">SH 上海</option>
+        <option value="SZ">SZ 深圳</option>
+        <option value="BJ">BJ 北交所</option>
+    </select>
+</div>
+
+<div id="stock-table-container"
+     hx-get="/data/stocks/table"
+     hx-trigger="load"
+     hx-target="#stock-table-body"
+     hx-include=".filter-input">
+    <table>
+        <thead><tr><th>代码</th><th>名称</th><th>交易所</th><th>行业</th><th>上市日期</th><th>市值(亿)</th></tr></thead>
+        <tbody id="stock-table-body">
+            <tr><td colspan="6" class="text-muted">加载中...</td></tr>
+        </tbody>
+    </table>
+    <div id="pagination-bar" class="pagination-bar"></div>
+</div>
+{% endblock %}

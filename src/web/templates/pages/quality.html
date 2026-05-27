@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}数据质量 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}数据质量{% endblock %}
+{% block content %}
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.stock_basic | default(0) }}</div>
+        <div class="stat-label">stock_basic 行数</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.stock_daily_quote | default(0) | int }}</div>
+        <div class="stat-label">stock_daily_quote 行数</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.stock_index_daily | default(0) | int }}</div>
+        <div class="stat-label">stock_index_daily 行数</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.stock_financial | default(0) | int }}</div>
+        <div class="stat-label">stock_financial 行数</div>
+    </div>
+</div>
+
+<div class="panel">
+    <h3>数据质量总览</h3>
+    <p class="text-muted">质量检查规则将在 Phase 3（数据处理）和 Phase 6（监控）中接入。当前显示数据库中的记录数。</p>
+    <p class="text-muted">质量报告详细页将在同步数据后自动生成。</p>
+</div>
+{% endblock %}

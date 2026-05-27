@@ -1,0 +1,19 @@
+{% for row in rows | default([]) %}
+<tr>
+    <td><code>{{ row.ts_code }}</code></td>
+    <td>{{ row.name }}</td>
+    <td>{{ row.exchange }}</td>
+    <td>{{ row.industry_l1 or '-' }}</td>
+    <td>{{ row.list_date }}</td>
+    <td>{{ '%.1f' | format(row.market_cap / 100000000) if row.market_cap else '-' }}</td>
+</tr>
+{% else %}
+<tr><td colspan="6" class="text-muted">暂无数据</td></tr>
+{% endfor %}
+{% if total_pages > 1 %}
+<tr><td colspan="6" class="pagination-bar">
+    {% if page > 1 %}<a class="page-link" hx-get="/data/stocks/table?page={{ page - 1 }}" hx-target="#stock-table-body" hx-include=".filter-input">&laquo; 上一页</a>{% endif %}
+    <span>第 {{ page }} / {{ total_pages }} 页 (共 {{ total }} 条)</span>
+    {% if page < total_pages %}<a class="page-link" hx-get="/data/stocks/table?page={{ page + 1 }}" hx-target="#stock-table-body" hx-include=".filter-input">下一页 &raquo;</a>{% endif %}
+</td></tr>
+{% endif %}

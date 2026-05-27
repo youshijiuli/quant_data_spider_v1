@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}仪表盘 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}仪表盘{% endblock %}
+{% block content %}
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_stocks | default(0) }}</div>
+        <div class="stat-label">股票总数</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_daily_quotes | default(0) | int }}</div>
+        <div class="stat-label">日线数据</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_index_records | default(0) | int }}</div>
+        <div class="stat-label">指数数据</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.total_financials | default(0) | int }}</div>
+        <div class="stat-label">财报数据</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ stats.active_sources_count | default(0) }}</div>
+        <div class="stat-label">活跃数据源</div>
+    </div>
+    <div class="stat-card {% if stats.alert_count | default(0) > 0 %}stat-card-warn{% endif %}">
+        <div class="stat-value">{{ stats.alert_count | default(0) }}</div>
+        <div class="stat-label">活跃告警</div>
+    </div>
+</div>
+
+<div class="panel">
+    <h3>最新同步记录</h3>
+    <table>
+        <thead><tr><th>数据源</th><th>状态</th><th>总行数</th><th>新增</th><th>开始时间</th></tr></thead>
+        <tbody>
+            {% for s in stats.recent_syncs | default([]) %}
+            <tr>
+                <td>{{ s.source_code }}</td>
+                <td><span class="badge badge-{{ 'success' if s.status == 'success' else 'error' if s.status == 'failed' else 'warning' }}">{{ s.status }}</span></td>
+                <td>{{ s.total_rows }}</td>
+                <td>{{ s.inserted_rows }}</td>
+                <td>{{ s.started_at }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-muted">暂无同步记录</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

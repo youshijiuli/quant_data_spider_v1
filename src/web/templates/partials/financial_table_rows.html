@@ -1,0 +1,22 @@
+{% for row in rows | default([]) %}
+<tr>
+    <td><code>{{ row.ts_code }}</code></td>
+    <td>{{ row.report_period }}</td>
+    <td>{{ row.end_date }}</td>
+    <td>{{ '%.2f' | format(row.total_revenue / 100000000) if row.total_revenue else '-' }}</td>
+    <td>{{ '%.2f' | format(row.revenue_yoy) if row.revenue_yoy else '-' }}%</td>
+    <td>{{ '%.2f' | format(row.net_profit / 100000000) if row.net_profit else '-' }}</td>
+    <td>{{ '%.2f' | format(row.profit_yoy) if row.profit_yoy else '-' }}%</td>
+    <td>{{ '%.2f' | format(row.eps) if row.eps else '-' }}</td>
+    <td>{{ '%.2f' | format(row.roe) if row.roe else '-' }}%</td>
+</tr>
+{% else %}
+<tr><td colspan="9" class="text-muted">暂无数据</td></tr>
+{% endfor %}
+{% if total_pages > 1 %}
+<tr><td colspan="9" class="pagination-bar">
+    {% if page > 1 %}<a class="page-link" hx-get="/data/financials/table?page={{ page - 1 }}" hx-target="#fin-table-body" hx-include=".filter-input">&laquo; 上一页</a>{% endif %}
+    <span>第 {{ page }} / {{ total_pages }} 页 (共 {{ total }} 条)</span>
+    {% if page < total_pages %}<a class="page-link" hx-get="/data/financials/table?page={{ page + 1 }}" hx-target="#fin-table-body" hx-include=".filter-input">下一页 &raquo;</a>{% endif %}
+</td></tr>
+{% endif %}

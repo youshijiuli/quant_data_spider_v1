@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}财务数据 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}<a href="/data/stocks">数据浏览</a> / 财务数据{% endblock %}
+{% block content %}
+<div class="subnav">
+    <a href="/data/stocks" class="tab">股票数据</a>
+    <a href="/data/indexes" class="tab">指数数据</a>
+    <a href="/data/financials" class="tab active">财务数据</a>
+    <a href="/data/sources" class="tab">数据源</a>
+</div>
+
+<div class="filter-bar" hx-get="/data/financials/table" hx-trigger="submit, change from:.filter-input delay:300ms" hx-target="#fin-table-body" hx-include=".filter-input">
+    <input class="filter-input" name="ts_code" placeholder="搜索股票代码...">
+</div>
+
+<div hx-get="/data/financials/table" hx-trigger="load" hx-target="#fin-table-body" hx-include=".filter-input">
+    <table>
+        <thead><tr><th>代码</th><th>报告期</th><th>截止日</th><th>营收(亿)</th><th>营收YoY%</th><th>净利润(亿)</th><th>利润YoY%</th><th>EPS</th><th>ROE%</th></tr></thead>
+        <tbody id="fin-table-body">
+            <tr><td colspan="9" class="text-muted">加载中...</td></tr>
+        </tbody>
+    </table>
+    <div class="pagination-bar"></div>
+</div>
+{% endblock %}

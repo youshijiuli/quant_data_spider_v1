@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}监控规则 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}<a href="/monitoring">告警中心</a> / 监控规则{% endblock %}
+{% block content %}
+<div class="subnav">
+    <a href="/monitoring" class="tab">告警列表</a>
+    <a href="/monitoring/rules" class="tab active">监控规则</a>
+</div>
+
+<table>
+    <thead><tr><th>规则代码</th><th>名称</th><th>目标表</th><th>检查类型</th><th>严重度</th><th>回溯(小时)</th><th>状态</th></tr></thead>
+    <tbody>
+        {% for r in rules | default([]) %}
+        <tr>
+            <td><code>{{ r.rule_code }}</code></td>
+            <td>{{ r.rule_name }}</td>
+            <td>{{ r.target_table }}</td>
+            <td>{{ r.check_type }}</td>
+            <td><span class="badge badge-{{ 'error' if r.severity == 'critical' else 'warning' if r.severity == 'warning' else 'info' }}">{{ r.severity }}</span></td>
+            <td>{{ r.lookback_hours }}</td>
+            <td><span class="badge badge-{{ 'success' if r.is_active else 'error' }}">{{ 'active' if r.is_active else 'inactive' }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-muted">暂无监控规则</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

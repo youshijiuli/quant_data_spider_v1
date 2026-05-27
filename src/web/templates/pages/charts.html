@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}图表分析 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}图表分析{% endblock %}
+{% block content %}
+<div class="chart-controls">
+    <select id="stock-picker" onchange="loadStockChart(this.value)" style="width:300px">
+        <option value="">— 选择股票 —</option>
+        {% for s in stocks | default([]) %}
+        <option value="{{ s.ts_code }}" {% if selected_stock and selected_stock.ts_code == s.ts_code %}selected{% endif %}>
+            {{ s.ts_code }} — {{ s.name }}
+        </option>
+        {% endfor %}
+    </select>
+    {% if selected_stock %}
+    <h3 style="margin:0">{{ selected_stock.ts_code }} — {{ selected_stock.name }}</h3>
+    {% endif %}
+</div>
+
+<div id="chart-container" style="width:100%;height:500px">
+    <p class="text-muted" style="text-align:center;padding-top:200px">请选择股票查看K线图</p>
+</div>
+<div id="volume-container" style="width:100%;height:200px"></div>
+{% endblock %}
+{% block scripts %}
+<script>
+function loadStockChart(tsCode) {
+    if (!tsCode) return;
+    window.location.href = '/charts/stock/' + tsCode;
+}
+
+{% if selected_stock %}
+(function() {
+    fetch('/charts/stock/{{ selected_stock.ts_code }}/data')
+        .then(r => r.json())
+        .then(data => {
+            if (!data.dates.length) return;
+            var chartDom = document.getElementById('chart-container');
+            chartDom.innerHTML = '';
+            var chart = echarts.init(chartDom, 'dark');
+            var ohlc = data.ohlc;
+            var option = {
+                title: { text: data.stock_name + ' (' + data.ts_code + ')', left: 0 },
+                tooltip: { trigger: 'axis', axisPointer: { type: 'cross' } },
+                grid: { left: '10%', right: '10%', top: '15%', height: '60%' },
+                xAxis: { data: data.dates, scale: true },
+                yAxis: { scale: true },
+                series: [{
+                    name: '价格', type: 'candlestick',
+                    data: ohlc,
+                    itemStyle: { color: '#ef5350', color0: '#26a69a', borderColor: '#ef5350', borderColor0: '#26a69a' }
+                }]
+            };
+            chart.setOption(option);
+            window.addEventListener('resize', function() { chart.resize(); });
+
+            var volDom = document.getElementById('volume-container');
+            volDom.innerHTML = '';
+            var volChart = echarts.init(volDom, 'dark');
+            volChart.setOption({
+                grid: { left: '10%', right: '10%', top: 0, height: '70%' },
+                xAxis: { data: data.dates },
+                yAxis: { name: '成交量' },
+                series: [{
+                    name: '成交量', type: 'bar',
+                    data: data.volumes,
+                    itemStyle: {
+                        color: function(params) {
+                            var i = params.dataIndex;
+                            return ohlc[i] && ohlc[i][1] >= ohlc[i][0] ? '#ef5350' : '#26a69a';
+                        }
+                    }
+                }]
+            });
+        });
+})();
+{% endif %}
+</script>
+{% endblock %}

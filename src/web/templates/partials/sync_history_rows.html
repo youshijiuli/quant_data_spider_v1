@@ -1,0 +1,19 @@
+<table>
+    <thead><tr><th>数据源</th><th>类型</th><th>状态</th><th>总行数</th><th>新增</th><th>更新</th><th>跳过</th><th>开始时间</th></tr></thead>
+    <tbody>
+        {% for r in history | default([]) %}
+        <tr>
+            <td>{{ r.source_code }}</td>
+            <td>{{ r.sync_type }}</td>
+            <td><span class="badge badge-{{ 'success' if r.status == 'success' else 'error' if r.status == 'failed' else 'warning' }}">{{ r.status }}</span></td>
+            <td>{{ r.total_rows }}</td>
+            <td>{{ r.inserted_rows }}</td>
+            <td>{{ r.updated_rows }}</td>
+            <td>{{ r.skipped_rows }}</td>
+            <td>{{ r.started_at }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-muted">暂无同步记录</td></tr>
+        {% endfor %}
+    </tbody>
+</table>

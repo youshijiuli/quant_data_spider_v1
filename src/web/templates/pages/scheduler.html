@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}定时任务 — Quant Data Spider{% endblock %}
+{% block breadcrumb %}定时任务{% endblock %}
+{% block content %}
+<table>
+    <thead><tr><th>任务ID</th><th>名称</th><th>触发规则</th><th>下次运行</th><th>操作</th></tr></thead>
+    <tbody>
+        {% for job in jobs_obj | default([]) %}
+        <tr>
+            <td><code>{{ job.id }}</code></td>
+            <td>{{ job.name }}</td>
+            <td><code>{{ job.trigger }}</code></td>
+            <td>{{ job.next_run_time or '--' }}</td>
+            <td>
+                <form hx-post="/scheduler/run/{{ job.id }}" hx-swap="none" style="display:inline">
+                    <button type="submit" class="btn-sm">立即执行</button>
+                </form>
+                <form hx-post="/scheduler/pause/{{ job.id }}" hx-swap="none" style="display:inline;margin-left:4px">
+                    <button type="submit" class="btn-sm">暂停</button>
+                </form>
+                <form hx-post="/scheduler/resume/{{ job.id }}" hx-swap="none" style="display:inline;margin-left:4px">
+                    <button type="submit" class="btn-sm">恢复</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-muted">暂无活跃的定时任务</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
