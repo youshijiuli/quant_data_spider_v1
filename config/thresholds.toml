@@ -1,0 +1,103 @@
+# Monitoring rule definitions and thresholds.
+
+[rules]
+# ── 日线行情检查 ──
+
+[rules.daily_null_rate]
+rule_code = "daily_null_rate"
+rule_name = "日线关键字段空值率"
+target_table = "stock_daily_quote"
+target_column = "close"
+check_type = "null_rate"
+threshold_max = 0.01
+lookback_hours = 24
+severity = "warning"
+is_active = true
+description = "最近一次同步的日线数据，收盘价空值率超过 1% 则告警"
+
+[rules.daily_row_count]
+rule_code = "daily_row_count"
+rule_name = "日线数据量过低"
+target_table = "stock_daily_quote"
+target_column = ""
+check_type = "row_count"
+threshold_min = 3000.0
+lookback_hours = 24
+severity = "critical"
+is_active = true
+description = "最近一个交易日日线记录少于 3000 条，可能同步失败"
+
+[rules.daily_stale]
+rule_code = "daily_stale"
+rule_name = "日线数据过期"
+target_table = "stock_daily_quote"
+target_column = "trade_date"
+check_type = "stale_data"
+lookback_hours = 24
+severity = "warning"
+is_active = true
+description = "最新日线日期滞后超过 1 个交易日（周末/节假日除外）"
+
+# ── 指数检查 ──
+
+[rules.index_null_rate]
+rule_code = "index_null_rate"
+rule_name = "指数关键字段空值率"
+target_table = "stock_index_daily"
+target_column = "close"
+check_type = "null_rate"
+threshold_max = 0.0
+lookback_hours = 24
+severity = "warning"
+is_active = true
+description = "指数日线收盘价存在空值"
+
+[rules.index_stale]
+rule_code = "index_stale"
+rule_name = "指数数据过期"
+target_table = "stock_index_daily"
+target_column = "trade_date"
+check_type = "stale_data"
+lookback_hours = 24
+severity = "warning"
+is_active = true
+description = "最新指数日线日期滞后"
+
+# ── 财务数据检查 ──
+
+[rules.financial_push]
+rule_code = "financial_push"
+rule_name = "财报未及时更新"
+target_table = "stock_financial"
+target_column = "report_period"
+check_type = "stale_data"
+lookback_hours = 2160
+severity = "info"
+is_active = true
+description = "90 天内无新增财报报告期记录"
+
+# ── 同步日志检查 ──
+
+[rules.sync_failure]
+rule_code = "sync_failure"
+rule_name = "同步失败检测"
+target_table = "data_sync_log"
+target_column = "status"
+check_type = "value_range"
+threshold_value = 0.0
+lookback_hours = 1
+severity = "critical"
+is_active = true
+description = "最近 1 小时有同步任务状态为 failed"
+
+[rules.duplicate_daily]
+rule_code = "duplicate_daily"
+rule_name = "日线重复记录"
+target_table = "stock_daily_quote"
+target_column = ""
+check_type = "duplicate_rate"
+threshold_max = 0.0
+lookback_hours = 24
+severity = "warning"
+is_active = true
+description = "日线数据存在 (ts_code, trade_date) 重复记录"

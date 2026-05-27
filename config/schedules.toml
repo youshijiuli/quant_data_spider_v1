@@ -1,0 +1,31 @@
+# Cron schedules for APScheduler jobs.
+# All times in Asia/Shanghai timezone.
+
+[jobs.sync_all_stocks]
+description = "全量A股日线同步（收盘后 16:30）"
+cron = {hour = "16", minute = "30"}
+sources = ["akshare_stock_daily"]
+enabled = true
+
+[jobs.sync_indices]
+description = "指数日线同步（收盘后 16:15）"
+cron = {hour = "16", minute = "15"}
+sources = ["akshare_index_daily"]
+enabled = true
+
+[jobs.sync_financials]
+description = "财务数据同步（每周末凌晨 3:00）"
+cron = {day_of_week = "sun", hour = "3", minute = "0"}
+sources = ["akshare_financial"]
+enabled = true
+
+[jobs.sync_stock_basic]
+description = "股票基本信息同步（每周末凌晨 4:00）"
+cron = {day_of_week = "sun", hour = "4", minute = "0"}
+sources = ["akshare_stock_basic"]
+enabled = true
+
+[jobs.run_monitoring]
+description = "数据质量监控检查（工作日每小时）"
+cron = {hour = "9-16/1"}
+enabled = true

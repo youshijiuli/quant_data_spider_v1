@@ -1,0 +1,61 @@
+# Data source definitions for AKShare endpoints.
+# Each source maps to an akshare function and target table.
+
+["akshare_stock_basic"]
+source_code = "akshare_stock_basic"
+source_name = "A股股票基本信息"
+source_type = "akshare"
+endpoint = "stock_info_a_code_name"
+description = "沪深京 A 股股票代码、名称和基本信息"
+is_active = true
+rate_limit_rps = 1.0
+retry_max = 3
+retry_backoff = 2.0
+target_table = "stock_basic"
+sync_type = "full"
+
+["akshare_stock_daily"]
+source_code = "akshare_stock_daily"
+source_name = "A股日线行情"
+source_type = "akshare"
+endpoint = "stock_zh_a_hist"
+description = "A股股票日线 OHLCV 数据，包含涨跌幅、换手率等指标"
+is_active = true
+rate_limit_rps = 2.0
+retry_max = 3
+retry_backoff = 2.0
+target_table = "stock_daily_quote"
+sync_type = "incremental"
+
+["akshare_index_daily"]
+source_code = "akshare_index_daily"
+source_name = "指数日线行情"
+source_type = "akshare"
+endpoint = "index_zh_a_hist"
+description = "上证指数、深证成指、沪深300 等主要指数日线数据"
+is_active = true
+rate_limit_rps = 2.0
+retry_max = 3
+retry_backoff = 2.0
+target_table = "stock_index_daily"
+sync_type = "incremental"
+
+["akshare_financial"]
+source_code = "akshare_financial"
+source_name = "A股财务报表"
+source_type = "akshare"
+endpoint = "stock_financial_abstract_ths"
+description = "A股财务摘要：营收、利润、EPS、ROE 等季度数据"
+is_active = true
+rate_limit_rps = 1.0
+retry_max = 3
+retry_backoff = 5.0
+target_table = "stock_financial"
+sync_type = "incremental"
+
+# Defines which sources to sync as a group
+[sync_groups]
+stock_daily = ["akshare_stock_daily"]
+index_daily = ["akshare_index_daily"]
+financials = ["akshare_financial"]
+all = ["akshare_stock_basic", "akshare_stock_daily", "akshare_index_daily", "akshare_financial"]
